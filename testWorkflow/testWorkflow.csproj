@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+      <PackageReference Include="WorkflowCore" Version="2.0.1" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <_ResolveComReferenceCache Remove="obj\Debug\netcoreapp3.0\testWorkflow.csproj.ResolveComReference.cache" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <IntermediateAssembly Remove="obj\Debug\netcoreapp3.0\testWorkflow.dll" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <_DebugSymbolsIntermediatePath Remove="obj\Debug\netcoreapp3.0\testWorkflow.pdb" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <_DeploymentManifestEntryPoint Remove="obj\Debug\netcoreapp3.0\testWorkflow.dll" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ApplicationManifest Remove="obj\Debug\netcoreapp3.0\testWorkflow.dll.manifest" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <DeployManifest Remove="obj\Debug\netcoreapp3.0\testWorkflow.application" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ClsidMap Remove="obj\Debug\netcoreapp3.0\testWorkflow.clsidmap" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <RegFreeComManifest Remove="obj\Debug\netcoreapp3.0\testWorkflow.X.manifest" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <RazorIntermediateAssembly Remove="obj\Debug\netcoreapp3.0\testWorkflow.Views.dll" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <_RazorDebugSymbolsIntermediatePath Remove="obj\Debug\netcoreapp3.0\testWorkflow.Views.pdb" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <UpToDateCheckBuilt Remove="obj\Debug\netcoreapp3.0\testWorkflow.Views.dll" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <_RazorComponentDeclarationAssembly Remove="obj\Debug\netcoreapp3.0\RazorDeclaration\testWorkflow.dll" />
+    </ItemGroup>
+
+</Project>
