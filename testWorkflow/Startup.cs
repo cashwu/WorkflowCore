@@ -24,8 +24,6 @@ namespace testWorkflow
             services.AddLogging();
 
             services.AddWorkflow();
-
-            services.AddTransient<MyDataClass>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -37,7 +35,7 @@ namespace testWorkflow
             app.UseAuthorization();
 
             var host = app.ApplicationServices.GetRequiredService<IWorkflowHost>();
-            host.RegisterWorkflow<PassDataWorkflow, MyDataClass>();
+            host.RegisterWorkflow<MultipleWorkflow>();
             host.Start();
 
             app.UseEndpoints(endpoints =>

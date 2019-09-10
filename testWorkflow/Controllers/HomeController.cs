@@ -27,8 +27,7 @@ namespace testWorkflow.Controllers
 
         public async Task<IActionResult> Workflow()
         {
-            var result = await _workflowHost.StartWorkflow(PassDataWorkflow.Add,
-                new MyDataClass {Input1 = 1, Input2 = 2});
+            var result = await _workflowHost.StartWorkflow(MultipleWorkflow.Run);
 
             Console.WriteLine(result);
 
@@ -37,23 +36,27 @@ namespace testWorkflow.Controllers
     }
 
 
-    class PassDataWorkflow : IWorkflow<MyDataClass>
+    class MultipleWorkflow : IWorkflow
     {
-        public const string Add = "Add";
+        public const string Run = "Run";
 
-        public string Id { get; } = Add;
+        public string Id { get; } = Run;
 
         public int Version { get; } = 1;
 
-        public void Build(IWorkflowBuilder<MyDataClass> builder)
+        public void Build(IWorkflowBuilder<object> builder)
         {
             builder
-                .StartWith<AddNumber>()
-                .Input(a => a.Input1, d => d.Input1)
-                .Input(a => a.Input2, d => d.Input2)
-                .Output(d => d.Output, a => a.Outpet)
-                .Then<CustomMessage>()
-                .Input(a => a.Message, d => $"Ans is {d.Output}")
+                .StartWith<SayHello>()
+                .Then<DetermineSomething>()
+                .When(a => 1)
+                .Do(a => a.StartWith<PrintMessage>()
+                    .Input(a => a.Message, d => "dd 1")
+                )
+                .When(a => 2)
+                .Do(a => a.StartWith<PrintMessage>()
+                    .Input(a => a.Message, d => "dd 2")
+                )
                 .Then(context =>
                 {
                     Console.WriteLine("finished");
@@ -62,7 +65,7 @@ namespace testWorkflow.Controllers
         }
     }
 
-    internal class CustomMessage : StepBody
+    internal class PrintMessage : StepBody
     {
         public string Message { get; set; }
         
@@ -73,24 +76,19 @@ namespace testWorkflow.Controllers
         }
     }
 
-    internal class MyDataClass
+    internal class DetermineSomething : StepBody
     {
-        public int Input1 { get; set; }
-        public int Input2 { get; set; }
-        public int Output { get; set; }
-    }
-
-    public class AddNumber : StepBody
-    {
-        public int Input1 { get; set; }
-
-        public int Input2 { get; set; }
-
-        public int Outpet { get; set; }
-
         public override ExecutionResult Run(IStepExecutionContext context)
         {
-            Outpet = Input1 + Input2;
+            return ExecutionResult.Outcome(1);
+        }
+    }
+
+    internal class SayHello : StepBody
+    {
+        public override ExecutionResult Run(IStepExecutionContext context)
+        {
+            Console.WriteLine("Hello");
             return ExecutionResult.Next();
         }
     }
