@@ -27,69 +27,71 @@ namespace testWorkflow.Controllers
 
         public async Task<IActionResult> Workflow()
         {
-            var result = await _workflowHost.StartWorkflow(HelloWorldWorkflow.Helloworld);
+            var result = await _workflowHost.StartWorkflow(PassDataWorkflow.Add,
+                new MyDataClass {Input1 = 1, Input2 = 2});
+
             Console.WriteLine(result);
 
             return Ok();
         }
     }
 
-    class HelloWorld : StepBody
+
+    class PassDataWorkflow : IWorkflow<MyDataClass>
     {
-        private readonly ILogger<HelloWorld> _logger;
+        public const string Add = "Add";
 
-        public HelloWorld(ILogger<HelloWorld> logger)
-        {
-            _logger = logger;
-        }
-
-        public override ExecutionResult Run(IStepExecutionContext context)
-        {
-            Console.WriteLine("Hello World");
-            _logger.LogInformation("Hello World");
-            return ExecutionResult.Next();
-        }
-    }
-
-    class GoodbyeWorld : StepBody
-    {
-        private readonly ILogger<GoodbyeWorld> _logger;
-
-        public GoodbyeWorld(ILogger<GoodbyeWorld> logger)
-        {
-            _logger = logger;
-        }
-
-        public override ExecutionResult Run(IStepExecutionContext context)
-        {
-            Console.WriteLine("Goodby");
-            _logger.LogInformation("Goodby");
-            return ExecutionResult.Next();
-        }
-    }
-
-    class HelloWorldWorkflow : IWorkflow
-    {
-        public const string Helloworld = "HelloWorld";
-
-        public string Id { get; } = Helloworld;
+        public string Id { get; } = Add;
 
         public int Version { get; } = 1;
 
-        public void Build(IWorkflowBuilder<object> builder)
+        public void Build(IWorkflowBuilder<MyDataClass> builder)
         {
-//            builder.StartWith<HelloWorld>()
-//                .Then<GoodbyeWorld>();
+            builder
+                .StartWith<AddNumber>()
+                .Input(a => a.Input1, d => d.Input1)
+                .Input(a => a.Input2, d => d.Input2)
+                .Output(d => d.Output, a => a.Outpet)
+                .Then<CustomMessage>()
+                .Input(a => a.Message, d => $"Ans is {d.Output}")
+                .Then(context =>
+                {
+                    Console.WriteLine("finished");
+                    return ExecutionResult.Next();
+                });
+        }
+    }
 
-            builder.StartWith(context =>
-            {
-                Console.WriteLine($"Hello World - {context.Step.Id}");
-                return ExecutionResult.Next();
-            }).Then(context =>
-            {
-                Console.WriteLine($"Goodbye World - {context.Step.Id}");
-                return ExecutionResult.Next();
-            });
+    internal class CustomMessage : StepBody
+    {
+        public string Message { get; set; }
+        
+        public override ExecutionResult Run(IStepExecutionContext context)
+        {
+            Console.WriteLine(Message);
+            return ExecutionResult.Next();
+        }
+    }
+
+    internal class MyDataClass
+    {
+        public int Input1 { get; set; }
+        public int Input2 { get; set; }
+        public int Output { get; set; }
+    }
+
+    public class AddNumber : StepBody
+    {
+        public int Input1 { get; set; }
+
+        public int Input2 { get; set; }
+
+        public int Outpet { get; set; }
+
+        public override ExecutionResult Run(IStepExecutionContext context)
+        {
+            Outpet = Input1 + Input2;
+            return ExecutionResult.Next();
         }
     }
 }

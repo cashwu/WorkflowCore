@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Linq.Dynamic.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using testWorkflow.Controllers;
 using WorkflowCore.Interface;
 
@@ -27,23 +22,22 @@ namespace testWorkflow
             services.AddControllersWithViews();
 
             services.AddLogging();
-            
+
             services.AddWorkflow();
 
-            services.AddTransient<HelloWorld>();
-            services.AddTransient<GoodbyeWorld>();
+            services.AddTransient<MyDataClass>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseStaticFiles();
-
+            
             app.UseRouting();
 
             app.UseAuthorization();
 
             var host = app.ApplicationServices.GetRequiredService<IWorkflowHost>();
-            host.RegisterWorkflow<HelloWorldWorkflow>();
+            host.RegisterWorkflow<PassDataWorkflow, MyDataClass>();
             host.Start();
 
             app.UseEndpoints(endpoints =>
